@@ -36,7 +36,7 @@ class Model(nn.Module):
         }
         return output
 
-class MaskInference(nn.Module):
+class BaselineBiLSTM(nn.Module):
     def __init__(self, num_features, num_audio_channels, hidden_size,
                  num_layers, bidirectional, dropout, num_sources, 
                 activation='sigmoid'):
@@ -75,12 +75,12 @@ class MaskInference(nn.Module):
               num_layers, bidirectional, dropout, num_sources, 
               activation='sigmoid'):
         # Step 1. Register our model with nussl
-        nussl.ml.register_module(MaskInference)
+        nussl.ml.register_module(BaselineBiLSTM)
         
         # Step 2a: Define the building blocks.
         modules = {
             'model': {
-                'class': 'MaskInference',
+                'class': 'BaselineBiLSTM',
                 'args': {
                     'num_features': num_features,
                     'num_audio_channels': num_audio_channels,
@@ -112,7 +112,7 @@ class MaskInference(nn.Module):
         # Then put it all together.
         output = ['estimates', 'mask',]
         config = {
-            'name': 'MaskInference',
+            'name': 'BaselineBiLSTM',
             'modules': modules,
             'connections': connections,
             'output': output

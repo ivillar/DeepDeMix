@@ -4,7 +4,7 @@ import json
 import glob
 import numpy as np
 from nussl.datasets import transforms as nussl_tfm
-from models import MaskInference
+from models import BaselineBiLSTM
 from common import utils, data, viz
 from pathlib import Path
 from train_utils import val_step, train_step
@@ -47,7 +47,7 @@ val_dataloader = torch.utils.data.DataLoader(
 
 # define the number of features
 nf = stft_params.window_length // 2 + 1
-model = MaskInference.build(nf, 1, 50, 1, True, 0.0, 1, 'sigmoid')
+model = BaselineBiLSTM.build(nf, 1, 50, 1, True, 0.0, 1, 'sigmoid')
 model.to(DEVICE)
 
 # define loss function and optimizer
@@ -73,12 +73,11 @@ output_folder = Path('.').absolute()
 nussl.ml.train.add_stdout_handler(trainer, validator)
 nussl.ml.train.add_validate_and_checkpoint(output_folder, model, 
     optimizer, train_data, trainer, val_dataloader, validator)
-print(f"BTW trainer is of type {type(trainer)}")
 print("Currently training...")
 trainer.run(
     train_dataloader, 
     epoch_length=10, 
-    max_epochs=1
+    max_epochs=30
 )
 print("Finished training.")
 print("Now evaluating.")
@@ -108,7 +107,7 @@ tfm = nussl_tfm.Compose([
 test_dataset = nussl.datasets.MUSDB18(subsets=['test'], transform=tfm)
 
 # Just do 5 items for speed. Change to 50 for actual experiment.
-for i in range(5):
+for i in range(50):
     item = test_dataset[i]
     separator.audio_signal = item['mix']
     estimates = separator()
