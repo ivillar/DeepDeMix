@@ -1,3 +1,3 @@
 # DeepDeMix
 
-For best milestone results, open Milestone.ipynb in Google Colab.
+To preview selected audio samples, open Milestone.ipynb in Google Colab.
