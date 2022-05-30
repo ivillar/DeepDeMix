@@ -217,7 +217,7 @@ class CNNEncoder(nn.Module):
             'estimates': data
         }
         return output
-    
+"""
     # Added function
     @staticmethod
     @argbind.bind_to_parser()
@@ -269,3 +269,4 @@ class CNNEncoder(nn.Module):
         }
         # Step 3. Instantiate the model as a SeparationModel.
         return nussl.ml.SeparationModel(config)
+"""
