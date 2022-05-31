@@ -61,3 +61,29 @@ def train_step_no_engine(model, loss_fn, optimizer, batch):
     }
     
     return loss_vals
+
+def pretrain_val_step(model, loss_fn, engine, batch):
+    with torch.no_grad():
+        output = model(batch) # forward pass
+    loss = loss_fn(
+        output[:, 0, :],
+        output[:, 2, :],
+        output[:, 1, :]
+    )    
+
+    return {"loss": loss.item()}
+
+
+def pretrain_step(model, loss_fn, optimizer, engine, batch):
+    optimizer.zero_grad()
+    output = model(batch) # forward pass
+    loss = loss_fn(
+        output[:, 0, :],
+        output[:, 2, :],
+        output[:, 1, :]
+    )
+    
+    loss.backward() # backwards + gradient step
+    optimizer.step()
+    
+    return {"loss": loss.item()}
