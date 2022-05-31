@@ -7,7 +7,7 @@ from nussl.datasets import transforms as nussl_tfm
 from models import CNNAutoEncoder, CNNEncoder
 from common import utils, data, viz
 from pathlib import Path
-from train_utils import val_step, train_step
+from train_utils import pretrain_step, pretrain_val_step
 from ignite.engine.events import Events
 from sox import transform
 from models import CNNEncoder
@@ -102,10 +102,10 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 loss_fn = torch.nn.TripletMarginLoss(margin=1.0, p=2)
 
 def train_step_wrapped(engine, batch):
-    return train_step(model, loss_fn, optimizer, engine, batch)
+    return pretrain_step(model, loss_fn, optimizer, engine, batch)
 
 def val_step_wrapped(engine, batch):
-    return val_step(model, loss_fn, engine, batch)
+    return pretrain_val_step(model, loss_fn, engine, batch)
 
 # Create the engines
 trainer, validator = nussl.ml.train.create_train_and_validation_engines(
