@@ -1,9 +1,20 @@
 import numpy as np
 import warnings
-warnings.filterwarnings('ignore')
 from typing import Union, List
 import warnings
 import scaper
+
+warnings.filterwarnings('ignore')
+
+class MixClosure:
+    
+    def __init__(self, fg_folder, bg_folder, event_template):
+        self.fg_folder = fg_folder
+        self.bg_folder = bg_folder
+        self.event_template = event_template
+        
+    def __call__(self, dataset, seed):
+        return generate_mixture(dataset, self.fg_folder, self.bg_folder, self.event_template, seed)
 
 def incoherent(fg_folder, bg_folder, event_template, random_state, seed):
     """

@@ -5,38 +5,6 @@ import torch
 from common import argbind
 from torch.nn import LayerNorm, Linear, Conv2d, ReLU, MaxPool2d, Dropout, Upsample, Sigmoid
 
-class Model(nn.Module):
-    def __init__(self, num_features, num_audio_channels, hidden_size,
-                 num_layers, bidirectional, dropout, num_sources, 
-                activation='sigmoid'):
-        super().__init__()
-        
-        self.amplitude_to_db = AmplitudeToDB()
-        self.input_normalization = BatchNorm(num_features)
-        self.recurrent_stack = RecurrentStack(
-            num_features * num_audio_channels, hidden_size, 
-            num_layers, bool(bidirectional), dropout
-        )
-        hidden_size = hidden_size * (int(bidirectional) + 1)
-        self.embedding = Embedding(num_features, hidden_size, 
-                                   num_sources, activation, 
-                                   num_audio_channels)
-        
-    def forward(self, data):
-        mix_magnitude = data # save for masking
-        
-        data = self.amplitude_to_db(mix_magnitude)
-        data = self.input_normalization(data)
-        data = self.recurrent_stack(data)
-        mask = self.embedding(data)
-        estimates = mix_magnitude.unsqueeze(-1) * mask
-        
-        output = {
-            'mask': mask,
-            'estimates': estimates
-        }
-        return output
-
 class BaselineBiLSTM(nn.Module):
     def __init__(self, num_features, num_audio_channels, hidden_size,
                  num_layers, bidirectional, dropout, num_sources, 
@@ -330,12 +298,6 @@ class CNNAutoEncoder(nn.Module):
         output = {
             'mask': mask,
             'estimates': estimates
-        }
-        return output
-
-        output = {
-            'mask': data,
-            'estimates': data
         }
         return output
         
